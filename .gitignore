@@ -1,3 +1,5 @@
+/.idea/
+/public/uploads/
 
 ###> symfony/framework-bundle ###
 /.env.local
@@ -8,8 +10,6 @@
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
-
-/public/uploads/
 
 ###> symfony/phpunit-bridge ###
 .phpunit
