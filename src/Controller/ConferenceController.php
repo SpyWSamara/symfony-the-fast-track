@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ConferenceController extends AbstractController
 {
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
     private MessageBusInterface $bus;
 
     public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $bus)
@@ -28,16 +28,24 @@ class ConferenceController extends AbstractController
     }
 
     #[Route('/', name: 'homepage')]
-    public function index(ConferenceRepository $conferenceRepository): Response
-    {
-        return $this->render('conference/index.html.twig', [
-            'conferences' => $conferenceRepository->findAll(),
-        ]);
+    public function index(
+        ConferenceRepository $conferenceRepository
+    ): Response {
+        return $this->render(
+            'conference/index.html.twig',
+            [
+                'conferences' => $conferenceRepository->findAll(),
+            ]
+        );
     }
 
     #[Route('/conference/{slug}', name: 'conference')]
-    public function show(Request $request, Conference $conference, CommentRepository $commentRepository, string $photoDir): Response
-    {
+    public function show(
+        Request $request,
+        Conference $conference,
+        CommentRepository $commentRepository,
+        string $photoDir
+    ): Response {
         $comment = new Comment();
         $form = $this->createForm(CommentFormType::class, $comment);
         $form->handleRequest($request);
@@ -70,12 +78,15 @@ class ConferenceController extends AbstractController
         $offset = \max(0, $request->query->getInt('offset', 0));
         $paginator = $commentRepository->getCommentPaginator($conference, $offset);
 
-        return $this->render('conference/show.html.twig', [
-            'conference' => $conference,
-            'comments' => $paginator,
-            'previous' => $offset - CommentRepository::PAGINATOR_PER_PAGE,
-            'next' => \min(\count($paginator), $offset + CommentRepository::PAGINATOR_PER_PAGE),
-            'comment_form' => $form->createView(),
-        ]);
+        return $this->render(
+            'conference/show.html.twig',
+            [
+                'conference' => $conference,
+                'comments' => $paginator,
+                'previous' => $offset - CommentRepository::PAGINATOR_PER_PAGE,
+                'next' => \min(\count($paginator), $offset + CommentRepository::PAGINATOR_PER_PAGE),
+                'comment_form' => $form->createView(),
+            ]
+        );
     }
 }
