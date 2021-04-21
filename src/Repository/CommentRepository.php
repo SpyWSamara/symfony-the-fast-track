@@ -46,10 +46,11 @@ class CommentRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      * @throws NoResultException
+     * @throws \Exception
      */
-    public function countSpamAndRejected(): int
+    public function countSpamAndRejected(?int $daysFromCreation): int
     {
-        return $this->getSpamAndRejectedQueryBuilder()
+        return $this->getSpamAndRejectedQueryBuilder($daysFromCreation)
             ->select('COUNT(c.id)')
             ->getQuery()
             ->getSingleScalarResult();
@@ -58,10 +59,11 @@ class CommentRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      * @throws NoResultException
+     * @throws \Exception
      */
-    public function deleteSpamAndRejected(): int
+    public function deleteSpamAndRejected(?int $daysFromCreation): int
     {
-        return $this->getSpamAndRejectedQueryBuilder()
+        return $this->getSpamAndRejectedQueryBuilder($daysFromCreation)
             ->delete()
             ->getQuery()
             ->getSingleScalarResult();
@@ -70,8 +72,12 @@ class CommentRepository extends ServiceEntityRepository
     /**
      * @throws \Exception
      */
-    private function getSpamAndRejectedQueryBuilder(): QueryBuilder
+    private function getSpamAndRejectedQueryBuilder(?int $daysFromCreation): QueryBuilder
     {
+        $date = new \DateTime(
+            \sprintf('-%d days', $daysFromCreation ?? self::DAYS_BEFORE_REJECTED_REMOVAL)
+        );
+
         return $this->createQueryBuilder('c')
             ->andWhere('c.state = :state_rejected or c.state = :state_spam')
             ->andWhere('c.createdAt < :date')
@@ -79,7 +85,7 @@ class CommentRepository extends ServiceEntityRepository
                 [
                     'state_rejected' => 'rejected',
                     'state_spam' => 'spam',
-                    'date' => new \DateTime(-self::DAYS_BEFORE_REJECTED_REMOVAL.' days'),
+                    'date' => $date,
                 ]
             );
     }
