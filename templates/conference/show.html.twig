@@ -3,7 +3,7 @@
 {% block title %}Conference Guestbook - {{ conference }}{% endblock %}
 
 {% block body %}
-    {%  for message in app.flashes('notifications') %}
+    {%  for message in app.flashes('notification') %}
         <div class="alert alert-info alert-dismissible fade show">
             {{ message }}
             <button type="button" class="close" data-dismiss="alert" aria-label="close">
