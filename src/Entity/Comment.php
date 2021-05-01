@@ -2,13 +2,21 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CommentRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=CommentRepository::class)
  * @ORM\HasLifecycleCallbacks()
+ *
+ * @ApiResource(
+ *     collectionOperations={"get"={"normalization_context"={"groups"="comment:list"}}},
+ *     itemOperations={"get"={"normalization_context"={"groups"="comment:list"}}},
+ *     order={"createdAt"="DESC"}, paginationEnabled=false
+ * )
  */
 class Comment
 {
@@ -17,23 +25,27 @@ class Comment
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
+    #[Groups(['comment:list', 'comment:item'])]
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
+    #[Groups(['comment:list', 'comment:item'])]
     #[Assert\NotBlank]
     private $author;
 
     /**
      * @ORM\Column(type="text")
      */
+    #[Groups(['comment:list', 'comment:item'])]
     #[Assert\NotBlank]
     private $text;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
+    #[Groups(['comment:list', 'comment:item'])]
     #[Assert\NotBlank]
     #[Assert\Email]
     private $email;
@@ -41,17 +53,20 @@ class Comment
     /**
      * @ORM\Column(type="datetime")
      */
+    #[Groups(['comment:list', 'comment:item'])]
     private $createdAt;
 
     /**
      * @ORM\ManyToOne(targetEntity=Conference::class, inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
      */
+    #[Groups(['comment:list', 'comment:item'])]
     private $conference;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
+    #[Groups(['comment:list', 'comment:item'])]
     private $photoFilename;
 
     /**
