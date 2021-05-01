@@ -1,0 +1,12 @@
+{% extends '@email/default/notification/body.html.twig' %}
+
+{% block content %}
+    <h2>Your comment accepted</h2>
+
+    <p>{{ comment.text }}</p>
+{% endblock %}
+
+{% block action %}
+    <spacer size="16"></spacer>
+    <button href="{{ url('conference', { slug: comment.conference.slug }) }}">View</button>
+{% endblock %}

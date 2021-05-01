@@ -4,6 +4,7 @@ namespace App\MessageHandler;
 
 use App\ImageOptimizer;
 use App\Message\CommentMessage;
+use App\Notification\CommentAcceptedNotification;
 use App\Notification\CommentReviewNotification;
 use App\Repository\CommentRepository;
 use App\SpamChecker;
@@ -13,6 +14,7 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Notifier\NotifierInterface;
+use Symfony\Component\Notifier\Recipient\Recipient;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 final class CommentMessageHandler implements MessageHandlerInterface
@@ -80,6 +82,13 @@ final class CommentMessageHandler implements MessageHandlerInterface
             }
             $this->workflow->apply($comment, 'optimize');
             $this->entityManager->flush();
+
+            // TODO: rewrite workaround for lazy loaded relative entity
+            $comment->getConference()->getSlug();
+            $this->notifier->send(
+                new CommentAcceptedNotification($comment),
+                new Recipient($comment->getEmail())
+            );
         } else {
             $this->logger?->debug(
                 'Dropping comment message',
