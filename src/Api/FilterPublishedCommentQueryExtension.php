@@ -5,6 +5,7 @@ namespace App\Api;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use App\Entity\Comment;
 use Doctrine\ORM\QueryBuilder;
 
 class FilterPublishedCommentQueryExtension implements
@@ -16,12 +17,14 @@ class FilterPublishedCommentQueryExtension implements
         string $resourceClass,
         string $operationName = null
     ) {
-        $queryBuilder->andWhere(
-            \sprintf(
-                "%s.state = 'published'",
-                $queryBuilder->getRootAliases()[0]
-            )
-        );
+        if (Comment::class === $resourceClass) {
+            $queryBuilder->andWhere(
+                \sprintf(
+                    "%s.state = 'published'",
+                    $queryBuilder->getRootAliases()[0]
+                )
+            );
+        }
     }
 
     public function applyToItem(
@@ -32,11 +35,13 @@ class FilterPublishedCommentQueryExtension implements
         string $operationName = null,
         array $context = []
     ) {
-        $queryBuilder->andWhere(
-            \sprintf(
-                "%s.state = 'published'",
-                $queryBuilder->getRootAliases()[0]
-            )
-        );
+        if (Comment::class === $resourceClass) {
+            $queryBuilder->andWhere(
+                \sprintf(
+                    "%s.state = 'published'",
+                    $queryBuilder->getRootAliases()[0]
+                )
+            );
+        }
     }
 }
