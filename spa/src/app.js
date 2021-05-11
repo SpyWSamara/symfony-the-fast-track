@@ -1,6 +1,8 @@
 import {h, render} from 'preact';
 import {Router, Link} from 'preact-router';
 
+import '../assets/styles/app.scss';
+
 import Home from './pages/home';
 import Conference from './pages/conference';
 
