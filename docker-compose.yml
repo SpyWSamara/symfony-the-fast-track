@@ -6,6 +6,7 @@ services:
       - "${MYSQL_PORT}:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./var/${MYSQL_DBNAME}.sql:/docker-entrypoint-initdb.d/${MYSQL_DBNAME}.sql:z
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_USER: ${MYSQL_USER}
