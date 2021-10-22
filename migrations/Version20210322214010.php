@@ -30,4 +30,10 @@ final class Version20210322214010 extends AbstractMigration
         $this->addSql('DROP TABLE messenger_messages');
         $this->addSql('ALTER TABLE comment CHANGE state state VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`');
     }
+
+    // Fix: https://github.com/doctrine/migrations/issues/1104
+    public function isTransactional(): bool
+    {
+        return false;
+    }
 }
